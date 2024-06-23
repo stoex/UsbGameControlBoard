@@ -151,15 +151,18 @@ namespace ETSSimulator
             await EvaluateUsbStreams(devices); 
         }
 
+        /// <summary>
+        /// Create a task for multiple HidDevices to evaluate their usb stream
+        /// </summary>
+        /// <param name="devices">List of HidDevices</param>
+        /// <returns>Tasks that evaluate each device</returns>
         static async Task EvaluateUsbStreams(List<HidDevice> devices)
         {
             List<Task> tasks = new List<Task>();
 
-            int i = 0;
-            foreach(var device in devices)
+            for(var i = 0; i < devices.Count; i++)
             {
-                tasks.Add(Task.Run(() => EvaluateUsbStream(device, _configuration.GetSection("UsbDevices:" + i))));
-                i++;
+                tasks.Add(EvaluateUsbStream(devices[i], _configuration.GetSection("UsbDevices:" + i)));
             }
 
             await Task.WhenAll(tasks);
